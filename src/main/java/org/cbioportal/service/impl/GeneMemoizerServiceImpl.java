@@ -31,7 +31,7 @@ public class GeneMemoizerServiceImpl implements GeneMemoizerService {
     }
     
     private boolean allTablesUpToDate(Date expiration) {
-        Map<String, Date> timestamps = timestampService.getTimestampsAsDates(TABLES);
+        //Map<String, Date> timestamps = timestampService.getTimestampsAsDates(TABLES);
         return true;
 //        TABLES.stream()
 //            .map((table) -> timestamps.containsKey(table) && timestamps.get(table).before(expiration))
