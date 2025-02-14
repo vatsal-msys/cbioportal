@@ -106,7 +106,7 @@ CREATE TABLE `type_of_cancer` (
 
 -- --------------------------------------------------------
 CREATE TABLE `reference_genome` (
-    `REFERENCE_GENOME_ID` int(4) NOT NULL AUTO_INCREMENT,
+    `REFERENCE_GENOME_ID` BIGINT NOT NULL AUTO_INCREMENT,
     `SPECIES` varchar(64) NOT NULL,
     `NAME` varchar(64) NOT NULL,
     `BUILD_NAME` varchar(64) NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE `reference_genome` (
 
 -- --------------------------------------------------------
 CREATE TABLE `cancer_study` (
-  `CANCER_STUDY_ID` int(11) NOT NULL auto_increment,
+  `CANCER_STUDY_ID` BIGINT NOT NULL auto_increment,
   `CANCER_STUDY_IDENTIFIER` varchar(255),
   `TYPE_OF_CANCER_ID` varchar(63) NOT NULL,
   `NAME` varchar(255) NOT NULL,
@@ -161,7 +161,7 @@ CREATE TABLE `authorities` (
 
 -- --------------------------------------------------------
 CREATE TABLE `patient` (
-  `INTERNAL_ID` int(11) NOT NULL auto_increment,
+  `INTERNAL_ID` BIGINT NOT NULL auto_increment,
   `STABLE_ID` varchar(50) NOT NULL,
   `CANCER_STUDY_ID` int(11) NOT NULL,
   PRIMARY KEY (`INTERNAL_ID`),
@@ -170,7 +170,7 @@ CREATE TABLE `patient` (
 
 -- --------------------------------------------------------
 CREATE TABLE `sample` (
-  `INTERNAL_ID` int(11) NOT NULL auto_increment,
+  `INTERNAL_ID` BIGINT NOT NULL auto_increment,
   `STABLE_ID` varchar(63) NOT NULL,
   `SAMPLE_TYPE` varchar(255) NOT NULL,
   `PATIENT_ID` int(11) NOT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE `sample` (
 
 -- --------------------------------------------------------
 CREATE TABLE `sample_list` (
-  `LIST_ID` int(11) NOT NULL auto_increment,
+  `LIST_ID` BIGINT NOT NULL auto_increment,
   `STABLE_ID` varchar(255) NOT NULL,
   `CATEGORY` varchar(255) NOT NULL,
   `CANCER_STUDY_ID` int(11) NOT NULL,
@@ -202,7 +202,7 @@ CREATE TABLE `sample_list_list` (
 -- --------------------------------------------------------
 
 CREATE TABLE `genetic_entity` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ID` BIGINT NOT NULL AUTO_INCREMENT,
   `ENTITY_TYPE` varchar(45) NOT NULL,
   `STABLE_ID` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
@@ -230,7 +230,7 @@ CREATE TABLE `gene_alias` (
 
 -- --------------------------------------------------------
 CREATE TABLE `geneset` (
-  `ID` INT(11) NOT NULL auto_increment,
+  `ID` BIGINT NOT NULL auto_increment,
   `GENETIC_ENTITY_ID` INT NOT NULL,
   `EXTERNAL_ID` VARCHAR(200) NOT NULL,
   `NAME` VARCHAR(200) NOT NULL,
@@ -272,7 +272,7 @@ CREATE TABLE `geneset_hierarchy_leaf` (
 
 -- ------------------------------------------------------
 CREATE TABLE `generic_entity_properties` (
-  `ID` INT(11) NOT NULL auto_increment,
+  `ID` BIGINT NOT NULL auto_increment,
   `GENETIC_ENTITY_ID` INT NOT NULL,
   `NAME` varchar(255) NOT NULL,
   `VALUE` varchar(5000) NOT NULL,
@@ -283,7 +283,7 @@ CREATE TABLE `generic_entity_properties` (
 
 -- --------------------------------------------------------
 CREATE TABLE `genetic_profile` (
-  `GENETIC_PROFILE_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `GENETIC_PROFILE_ID` BIGINT NOT NULL AUTO_INCREMENT,
   `STABLE_ID` varchar(255) NOT NULL,
   `CANCER_STUDY_ID` int(11) NOT NULL,
   `GENETIC_ALTERATION_TYPE` varchar(255) NOT NULL,
@@ -330,7 +330,7 @@ CREATE TABLE `genetic_profile_samples` (
 
 -- --------------------------------------------------------
 CREATE TABLE `gene_panel` (
-  `INTERNAL_ID` int(11) NOT NULL auto_increment,
+  `INTERNAL_ID` BIGINT NOT NULL auto_increment,
   `STABLE_ID` varchar(255) NOT NULL,
   `DESCRIPTION` mediumtext,
   PRIMARY KEY (`INTERNAL_ID`),
@@ -360,7 +360,7 @@ CREATE TABLE `sample_profile` (
 
 -- --------------------------------------------------------
 CREATE TABLE `structural_variant` (
-  `INTERNAL_ID` int(11) NOT NULL auto_increment,
+  `INTERNAL_ID` BIGINT NOT NULL auto_increment,
   `GENETIC_PROFILE_ID` int(11) NOT NULL,
   `SAMPLE_ID` int(11) NOT NULL,
   `SITE1_ENTREZ_GENE_ID` int(11),
@@ -425,7 +425,7 @@ CREATE TABLE `alteration_driver_annotation` (
 
 -- --------------------------------------------------------
 CREATE TABLE `mutation_event` (
-  `MUTATION_EVENT_ID` int(255) NOT NULL auto_increment,
+  `MUTATION_EVENT_ID` BIGINT NOT NULL auto_increment,
   `ENTREZ_GENE_ID` int(11) NOT NULL,
   `CHR` varchar(5),
   `START_POSITION` bigint(20),
@@ -579,7 +579,7 @@ CREATE TABLE `gistic_to_gene` (
 
 -- --------------------------------------------------------
 CREATE TABLE `cna_event` (
-  `CNA_EVENT_ID` int(255) NOT NULL auto_increment,
+  `CNA_EVENT_ID` BIGINT NOT NULL auto_increment,
   `ENTREZ_GENE_ID` int(11) NOT NULL,
   `ALTERATION` tinyint NOT NULL,
   PRIMARY KEY (`CNA_EVENT_ID`),
@@ -619,7 +619,7 @@ CREATE TABLE `copy_number_seg` (
 
 -- --------------------------------------------------------
 CREATE TABLE `copy_number_seg_file` (
-  `SEG_FILE_ID` int(11) NOT NULL auto_increment,
+  `SEG_FILE_ID` BIGINT NOT NULL auto_increment,
   `CANCER_STUDY_ID` int(11) NOT NULL,
   `REFERENCE_GENOME_ID` varchar(10) NOT NULL,
   `DESCRIPTION` varchar(255) NOT NULL,
@@ -648,7 +648,7 @@ CREATE TABLE `cosmic_mutation` (
 
 -- --------------------------------------------------------
 CREATE TABLE `clinical_event` (
-  `CLINICAL_EVENT_ID` int NOT NULL auto_increment,
+  `CLINICAL_EVENT_ID` BIGINT NOT NULL auto_increment,
   `PATIENT_ID`  int(11) NOT NULL,
   `START_DATE` int NOT NULL,
   `STOP_DATE` int,
