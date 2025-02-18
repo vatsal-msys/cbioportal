@@ -1024,3 +1024,252 @@ CREATE INDEX idx_clinical_event_key ON clinical_event_data (`KEY`);
 CREATE INDEX idx_clinical_event_value ON clinical_event_data (`VALUE`);
 CREATE INDEX idx_sample_stable_id ON sample (`STABLE_ID`);
 UPDATE `info` SET `DB_SCHEMA_VERSION`="2.13.1";
+
+##version: 2.13.2
+
+-- Step 1: Drop all foreign keys
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `cancer_study_tags` DROP FOREIGN KEY `cancer_study_tags_ibfk_1`;
+ALTER TABLE `patient` DROP FOREIGN KEY `patient_ibfk_1`;
+ALTER TABLE `sample` DROP FOREIGN KEY `sample_ibfk_1`;
+ALTER TABLE `sample_list` DROP FOREIGN KEY `sample_list_ibfk_1`;
+ALTER TABLE `sample_list_list` DROP FOREIGN KEY `sample_list_list_ibfk_1`;
+ALTER TABLE `sample_list_list` DROP FOREIGN KEY `sample_list_list_ibfk_2`;
+ALTER TABLE `gene` DROP FOREIGN KEY `gene_ibfk_1`;
+ALTER TABLE `gene_alias` DROP FOREIGN KEY `gene_alias_ibfk_1`;
+ALTER TABLE `geneset` DROP FOREIGN KEY `geneset_ibfk_1`;
+ALTER TABLE `geneset_gene` DROP FOREIGN KEY `geneset_gene_ibfk_1`;
+ALTER TABLE `geneset_gene` DROP FOREIGN KEY `geneset_gene_ibfk_2`;
+ALTER TABLE `geneset_hierarchy_leaf` DROP FOREIGN KEY `geneset_hierarchy_leaf_ibfk_1`;
+ALTER TABLE `geneset_hierarchy_leaf` DROP FOREIGN KEY `geneset_hierarchy_leaf_ibfk_2`;
+ALTER TABLE `generic_entity_properties` DROP FOREIGN KEY `generic_entity_properties_ibfk_1`;
+ALTER TABLE `genetic_profile` DROP FOREIGN KEY `genetic_profile_ibfk_1`;
+ALTER TABLE `genetic_profile_link` DROP FOREIGN KEY `genetic_profile_link_ibfk_1`;
+ALTER TABLE `genetic_profile_link` DROP FOREIGN KEY `genetic_profile_link_ibfk_2`;
+ALTER TABLE `genetic_alteration` DROP FOREIGN KEY `genetic_alteration_ibfk_1`;
+ALTER TABLE `genetic_alteration` DROP FOREIGN KEY `genetic_alteration_ibfk_2`;
+ALTER TABLE `genetic_profile_samples` DROP FOREIGN KEY `genetic_profile_samples_ibfk_1`;
+ALTER TABLE `gene_panel_list` DROP FOREIGN KEY `gene_panel_list_ibfk_1`;
+ALTER TABLE `gene_panel_list` DROP FOREIGN KEY `gene_panel_list_ibfk_2`;
+ALTER TABLE `sample_profile` DROP FOREIGN KEY `sample_profile_ibfk_1`;
+ALTER TABLE `sample_profile` DROP FOREIGN KEY `sample_profile_ibfk_2`;
+ALTER TABLE `sample_profile` DROP FOREIGN KEY `sample_profile_ibfk_3`;
+ALTER TABLE `structural_variant` DROP FOREIGN KEY `structural_variant_ibfk_1`;
+ALTER TABLE `structural_variant` DROP FOREIGN KEY `structural_variant_ibfk_2`;
+ALTER TABLE `structural_variant` DROP FOREIGN KEY `structural_variant_ibfk_3`;
+ALTER TABLE `structural_variant` DROP FOREIGN KEY `structural_variant_ibfk_4`;
+ALTER TABLE `alteration_driver_annotation` DROP FOREIGN KEY `alteration_driver_annotation_ibfk_1`;
+ALTER TABLE `alteration_driver_annotation` DROP FOREIGN KEY `alteration_driver_annotation_ibfk_2`;
+ALTER TABLE `mutation_event` DROP FOREIGN KEY `mutation_event_ibfk_1`;
+ALTER TABLE `mutation` DROP FOREIGN KEY `mutation_ibfk_1`;
+ALTER TABLE `mutation` DROP FOREIGN KEY `mutation_ibfk_2`;
+ALTER TABLE `mutation` DROP FOREIGN KEY `mutation_ibfk_3`;
+ALTER TABLE `mutation_count_by_keyword` DROP FOREIGN KEY `mutation_count_by_keyword_ibfk_1`;
+ALTER TABLE `mutation_count_by_keyword` DROP FOREIGN KEY `mutation_count_by_keyword_ibfk_2`;
+ALTER TABLE `clinical_patient` DROP FOREIGN KEY `clinical_patient_ibfk_1`;
+ALTER TABLE `clinical_sample` DROP FOREIGN KEY `clinical_sample_ibfk_1`;
+ALTER TABLE `clinical_attribute_meta` DROP FOREIGN KEY `clinical_attribute_meta_ibfk_1`;
+ALTER TABLE `mut_sig` DROP FOREIGN KEY `mut_sig_ibfk_1`;
+ALTER TABLE `mut_sig` DROP FOREIGN KEY `mut_sig_ibfk_2`;
+ALTER TABLE `gistic` DROP FOREIGN KEY `gistic_ibfk_1`;
+ALTER TABLE `gistic_to_gene` DROP FOREIGN KEY `gistic_to_gene_ibfk_1`;
+ALTER TABLE `cna_event` DROP FOREIGN KEY `cna_event_ibfk_1`;
+ALTER TABLE `sample_cna_event` DROP FOREIGN KEY `sample_cna_event_ibfk_1`;
+ALTER TABLE `sample_cna_event` DROP FOREIGN KEY `sample_cna_event_ibfk_2`;
+ALTER TABLE `sample_cna_event` DROP FOREIGN KEY `sample_cna_event_ibfk_3`;
+ALTER TABLE `copy_number_seg` DROP FOREIGN KEY `copy_number_seg_ibfk_1`;
+ALTER TABLE `copy_number_seg` DROP FOREIGN KEY `copy_number_seg_ibfk_2`;
+ALTER TABLE `copy_number_seg_file` DROP FOREIGN KEY `copy_number_seg_file_ibfk_1`;
+ALTER TABLE `cosmic_mutation` DROP FOREIGN KEY `cosmic_mutation_ibfk_1`;
+ALTER TABLE `clinical_event` DROP FOREIGN KEY `clinical_event_ibfk_1`;
+ALTER TABLE `clinical_event_data` DROP FOREIGN KEY `clinical_event_data_ibfk_1`;
+ALTER TABLE `reference_genome_gene` DROP FOREIGN KEY `reference_genome_gene_ibfk_1`;
+ALTER TABLE `reference_genome_gene` DROP FOREIGN KEY `reference_genome_gene_ibfk_2`;
+ALTER TABLE `allele_specific_copy_number` DROP FOREIGN KEY `allele_specific_copy_number_ibfk_1`;
+ALTER TABLE `allele_specific_copy_number` DROP FOREIGN KEY `allele_specific_copy_number_ibfk_2`;
+ALTER TABLE `allele_specific_copy_number` DROP FOREIGN KEY `allele_specific_copy_number_ibfk_3`;
+ALTER TABLE `resource_definition` DROP FOREIGN KEY `resource_definition_ibfk_1`;
+ALTER TABLE `resource_sample` DROP FOREIGN KEY `resource_sample_ibfk_1`;
+ALTER TABLE `resource_patient` DROP FOREIGN KEY `resource_patient_ibfk_1`;
+ALTER TABLE `resource_study` DROP FOREIGN KEY `resource_study_ibfk_1`;
+
+-- Step 2: Change dtype of primary autoincrement keys
+ALTER TABLE `reference_genome` MODIFY COLUMN `REFERENCE_GENOME_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `cancer_study` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `patient` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `sample` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `sample_list` MODIFY COLUMN `LIST_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `genetic_entity` MODIFY COLUMN `ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `geneset` MODIFY COLUMN `ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `generic_entity_properties` MODIFY COLUMN `ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `genetic_profile` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `gene_panel` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `structural_variant` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `mutation_event` MODIFY COLUMN `MUTATION_EVENT_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `cna_event` MODIFY COLUMN `CNA_EVENT_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `copy_number_seg_file` MODIFY COLUMN `SEG_FILE_ID` BIGINT NOT NULL AUTO_INCREMENT;
+ALTER TABLE `clinical_event` MODIFY COLUMN `CLINICAL_EVENT_ID` BIGINT NOT NULL AUTO_INCREMENT;
+
+-- Step 3: Change dtype of foreign keys
+ALTER TABLE `cancer_study` MODIFY COLUMN `REFERENCE_GENOME_ID` BIGINT DEFAULT 1;
+ALTER TABLE `cancer_study_tags` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `patient` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `sample` MODIFY COLUMN `PATIENT_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_list` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_list_list` MODIFY COLUMN `LIST_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_list_list` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `gene` MODIFY COLUMN `GENETIC_ENTITY_ID` BIGINT NOT NULL;
+ALTER TABLE `geneset` MODIFY COLUMN `GENETIC_ENTITY_ID` BIGINT NOT NULL;
+ALTER TABLE `geneset_gene` MODIFY COLUMN `GENESET_ID` BIGINT NOT NULL;
+ALTER TABLE `geneset_gene` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `geneset_hierarchy_leaf` MODIFY COLUMN `GENESET_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_profile` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_profile_link` MODIFY COLUMN `REFERRING_GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_profile_link` MODIFY COLUMN `REFERRED_GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_alteration` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_alteration` MODIFY COLUMN `GENETIC_ENTITY_ID` BIGINT NOT NULL;
+ALTER TABLE `genetic_profile_samples` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `gene_panel_list` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL;
+ALTER TABLE `gene_panel_list` MODIFY COLUMN `GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_profile` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_profile` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_profile` MODIFY COLUMN `PANEL_ID` BIGINT NOT NULL;
+ALTER TABLE `structural_variant` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `structural_variant` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `structural_variant` MODIFY COLUMN `SITE1_ENTREZ_GENE_ID` BIGINT;
+ALTER TABLE `structural_variant` MODIFY COLUMN `SITE2_ENTREZ_GENE_ID` BIGINT;
+ALTER TABLE `alteration_driver_annotation` MODIFY COLUMN `ALTERATION_EVENT_ID` BIGINT NOT NULL;
+ALTER TABLE `alteration_driver_annotation` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `alteration_driver_annotation` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation_event` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation` MODIFY COLUMN `MUTATION_EVENT_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation_count_by_keyword` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `mutation_count_by_keyword` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `clinical_attribute_meta` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `mut_sig` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `mut_sig` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `gistic` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `gistic_to_gene` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_cna_event` MODIFY COLUMN `CNA_EVENT_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_cna_event` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `sample_cna_event` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `copy_number_seg` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `copy_number_seg` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `cosmic_mutation` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `clinical_event` MODIFY COLUMN `PATIENT_ID` BIGINT NOT NULL;
+ALTER TABLE `clinical_event_data` MODIFY COLUMN `CLINICAL_EVENT_ID` BIGINT NOT NULL;
+ALTER TABLE `reference_genome_gene` MODIFY COLUMN `ENTREZ_GENE_ID` BIGINT NOT NULL;
+ALTER TABLE `reference_genome_gene` MODIFY COLUMN `REFERENCE_GENOME_ID` BIGINT NOT NULL;
+ALTER TABLE `allele_specific_copy_number` MODIFY COLUMN `MUTATION_EVENT_ID` BIGINT NOT NULL;
+ALTER TABLE `allele_specific_copy_number` MODIFY COLUMN `GENETIC_PROFILE_ID` BIGINT NOT NULL;
+ALTER TABLE `allele_specific_copy_number` MODIFY COLUMN `SAMPLE_ID` BIGINT NOT NULL;
+ALTER TABLE `resource_definition` MODIFY COLUMN `CANCER_STUDY_ID` BIGINT NOT NULL;
+ALTER TABLE `resource_sample` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL;
+ALTER TABLE `resource_patient` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL;
+ALTER TABLE `resource_study` MODIFY COLUMN `INTERNAL_ID` BIGINT NOT NULL;
+
+-- Step 4: Re-add foreign key constraints
+ALTER TABLE `cancer_study`
+  ADD CONSTRAINT `cancer_study_ibfk_1` FOREIGN KEY (`TYPE_OF_CANCER_ID`) REFERENCES `type_of_cancer` (`TYPE_OF_CANCER_ID`),
+  ADD CONSTRAINT `cancer_study_ibfk_2` FOREIGN KEY (`REFERENCE_GENOME_ID`) REFERENCES `reference_genome` (`REFERENCE_GENOME_ID`) ON DELETE RESTRICT;
+
+ALTER TABLE `cancer_study_tags`
+  ADD CONSTRAINT `cancer_study_tags_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `patient`
+  ADD CONSTRAINT `patient_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `sample`
+  ADD CONSTRAINT `sample_ibfk_1` FOREIGN KEY (`PATIENT_ID`) REFERENCES `patient` (`INTERNAL_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `sample_list`
+  ADD CONSTRAINT `sample_list_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `sample_list_list`
+  ADD CONSTRAINT `sample_list_list_ibfk_1` FOREIGN KEY (`LIST_ID`) REFERENCES `sample_list` (`LIST_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sample_list_list_ibfk_2` FOREIGN KEY (`SAMPLE_ID`) REFERENCES `sample` (`INTERNAL_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `gene`
+  ADD CONSTRAINT `gene_ibfk_1` FOREIGN KEY (`GENETIC_ENTITY_ID`) REFERENCES `genetic_entity` (`ID`) ON DELETE CASCADE;
+
+ALTER TABLE `gene_alias`
+  ADD CONSTRAINT `gene_alias_ibfk_1` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`);
+
+ALTER TABLE `geneset`
+  ADD CONSTRAINT `geneset_ibfk_1` FOREIGN KEY (`GENETIC_ENTITY_ID`) REFERENCES `genetic_entity` (`ID`) ON DELETE CASCADE;
+
+ALTER TABLE `geneset_gene`
+  ADD CONSTRAINT `geneset_gene_ibfk_1` FOREIGN KEY (`GENESET_ID`) REFERENCES `geneset` (`ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `geneset_gene_ibfk_2` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `geneset_hierarchy_leaf`
+  ADD CONSTRAINT `geneset_hierarchy_leaf_ibfk_1` FOREIGN KEY (`NODE_ID`) REFERENCES `geneset_hierarchy_node` (`NODE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `geneset_hierarchy_leaf_ibfk_2` FOREIGN KEY (`GENESET_ID`) REFERENCES `geneset` (`ID`) ON DELETE CASCADE;
+
+ALTER TABLE `generic_entity_properties`
+  ADD CONSTRAINT `generic_entity_properties_ibfk_1` FOREIGN KEY (`GENETIC_ENTITY_ID`) REFERENCES `genetic_entity` (`ID`) ON DELETE CASCADE;
+
+ALTER TABLE `genetic_profile`
+  ADD CONSTRAINT `genetic_profile_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `genetic_profile_link`
+  ADD CONSTRAINT `genetic_profile_link_ibfk_1` FOREIGN KEY (`REFERRING_GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `genetic_profile_link_ibfk_2` FOREIGN KEY (`REFERRED_GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE NO ACTION;
+
+ALTER TABLE `genetic_alteration`
+  ADD CONSTRAINT `genetic_alteration_ibfk_1` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `genetic_alteration_ibfk_2` FOREIGN KEY (`GENETIC_ENTITY_ID`) REFERENCES `genetic_entity` (`ID`) ON DELETE CASCADE;
+
+ALTER TABLE `genetic_profile_samples`
+  ADD CONSTRAINT `genetic_profile_samples_ibfk_1` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `gene_panel_list`
+  ADD CONSTRAINT `gene_panel_list_ibfk_1` FOREIGN KEY (`INTERNAL_ID`) REFERENCES `gene_panel` (`INTERNAL_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `gene_panel_list_ibfk_2` FOREIGN KEY (`GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `sample_profile`
+  ADD CONSTRAINT `sample_profile_ibfk_1` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sample_profile_ibfk_2` FOREIGN KEY (`SAMPLE_ID`) REFERENCES `sample` (`INTERNAL_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sample_profile_ibfk_3` FOREIGN KEY (`PANEL_ID`) REFERENCES `gene_panel` (`INTERNAL_ID`) ON DELETE RESTRICT;
+
+ALTER TABLE `reference_genome_gene`
+  ADD CONSTRAINT `reference_genome_gene_ibfk_1` FOREIGN KEY (`REFERENCE_GENOME_ID`) REFERENCES `reference_genome` (`REFERENCE_GENOME_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reference_genome_gene_ibfk_2` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `mutation`
+  ADD CONSTRAINT `mutation_ibfk_1` FOREIGN KEY (`MUTATION_EVENT_ID`) REFERENCES `mutation_event` (`MUTATION_EVENT_ID`),
+  ADD CONSTRAINT `mutation_ibfk_2` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`),
+  ADD CONSTRAINT `mutation_ibfk_3` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `mutation_count_by_keyword`
+  ADD CONSTRAINT `mutation_count_by_keyword_ibfk_1` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mutation_count_by_keyword_ibfk_2` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `clinical_patient`
+  ADD CONSTRAINT `clinical_patient_ibfk_1` FOREIGN KEY (`INTERNAL_ID`) REFERENCES `patient` (`INTERNAL_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `clinical_sample`
+  ADD CONSTRAINT `clinical_sample_ibfk_1` FOREIGN KEY (`INTERNAL_ID`) REFERENCES `sample` (`INTERNAL_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `mut_sig`
+  ADD CONSTRAINT `mut_sig_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mut_sig_ibfk_2` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`);
+
+ALTER TABLE `cna_event`
+  ADD CONSTRAINT `cna_event_ibfk_1` FOREIGN KEY (`ENTREZ_GENE_ID`) REFERENCES `gene` (`ENTREZ_GENE_ID`);
+
+ALTER TABLE `sample_cna_event`
+  ADD CONSTRAINT `sample_cna_event_ibfk_1` FOREIGN KEY (`CNA_EVENT_ID`) REFERENCES `cna_event` (`CNA_EVENT_ID`),
+  ADD CONSTRAINT `sample_cna_event_ibfk_2` FOREIGN KEY (`GENETIC_PROFILE_ID`) REFERENCES `genetic_profile` (`GENETIC_PROFILE_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sample_cna_event_ibfk_3` FOREIGN KEY (`SAMPLE_ID`) REFERENCES `sample` (`INTERNAL_ID`) ON DELETE CASCADE;
+
+ALTER TABLE `resource_definition`
+  ADD CONSTRAINT `resource_definition_ibfk_1` FOREIGN KEY (`CANCER_STUDY_ID`) REFERENCES `cancer_study` (`CANCER_STUDY_ID`) ON DELETE CASCADE;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+UPDATE `info` SET `DB_SCHEMA_VERSION`="2.13.2";
